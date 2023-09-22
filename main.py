@@ -1,5 +1,6 @@
 from CTkMessagebox import *
 from customtkinter import *
+import json
 
 # <-- Program Configurations --> #
 root = CTk()
@@ -7,62 +8,82 @@ root.title("Employee Manager")
 root.geometry("850x600")
 root.resizable(False, False)
 
-# <-- Set Globals --> #
-employees = ["Natan", "David", "Tali", "Moshe", "Yafa", "Ronit"]
+
+# <-- Open Employee JSON file --> #
+employees_json = {}
+
+employees_json_file_path = os.path.expanduser("~/Documents/Employee List/employees.json")
+
+try:
+    with open(employees_json_file_path, "r") as file:
+        content = json.load(file)
+
+        for employee, role in content["employees"].items():
+            employees_json[employee] = role
+
+except FileNotFoundError:
+    with open(os.path.expanduser("~/Documents/Employee List/employees.json"), "w") as file:
+        file.write("""{
+  "employees": {
+  }
+}""")
 
 
-# <-- Enter New Employee --> #
-def enter_new_employee(new_employee):
-    global employee_menu_list
-    global employees
-    
-    if new_employee.title() in employees:
-        employee_exists = CTkLabel(root, text_color="red", text="Employee already exists!").grid(row=1, column=1, padx=1, pady=1)
-    else:
-        if new_employee == "" or len(new_employee) < 2:
-            employee_exists = CTkLabel(root, text_color="red", text="Invalid Employee Name!").grid(row=1, column=1, padx=1, pady=1)
-        else:
-            employees.append(new_employee.title())  # Enter the new employee
-            employee_menu_list.destroy()  # Destroy the current Options Menu
-            employee_menu_list = CTkOptionMenu(root, values=employees)  # Rebuild the Options menu with the updated employees
-            employee_menu_list.grid(row=0, column=4, padx=5, pady=5)
+# <-- View/Edit Employees --> #
+def view_or_edit_employees():
+    global employees_json
+
+    view_employees_window = CTkToplevel()
+    view_employees_window.title("Employee Manager @ View/Edit Employees")
+    view_employees_window.geometry("850x700")
+    view_employees_window.resizable(False, False)
+
+    employee_list_label = CTkLabel(view_employees_window, font=("Helvetica", 20), text="Employee List")
+    employee_list_label.grid(row=0, column=0, columnspan=4, padx=5, pady=5)
+
+    employee_list_frame = CTkScrollableFrame(master=view_employees_window, width=820, height=500)
+    employee_list_frame.grid(row=1, column=0, columnspan=4, padx=5, pady=5)
+
+    employee_name = CTkLabel(employee_list_frame, text="Employee First Name:")
+    employee_name.grid(row=0, column=0, padx=15, pady=15)
+
+    employee_last_name = CTkLabel(employee_list_frame, text="Employee Last Name:")
+    employee_last_name.grid(row=0, column=1, padx=15, pady=15)
+
+    employee_role = CTkLabel(employee_list_frame, text="Employee Role:")
+    employee_role.grid(row=0, column=2, padx=15, pady=15)
+
+    employee_category = CTkLabel(employee_list_frame, text="Employee Role Category:")
+    employee_category.grid(row=0, column=3, padx=15, pady=15)
+
+    employee_rate = CTkLabel(employee_list_frame, text="Employment Rate:")
+    employee_rate.grid(row=0, column=4, padx=15, pady=15)
+
+    # Display Employees
+    current_row = 1
+    current_column = 0
+
+    for employee_tag, employee_info in employees_json.items():
+        for emp_fname, emp_lname in employee_info.items():
+            emp_fname = CTkLabel(employee_list_frame, text=emp_lname)
+            emp_fname.grid(row=current_row, column=current_column, padx=5, pady=5)
+
+            current_column += 1
+            if current_column > 4:
+                current_column = 0
+                current_row += 1
+
+    new_employee = CTkButton(view_employees_window, fg_color="green", text="New Employee")
+    new_employee.grid(row=2, column=0, columnspan=2)
+
+    update_employee = CTkButton(view_employees_window, text="Update Employee")
+    update_employee.grid(row=2, column=1, columnspan=2)
+
+    delete_employee = CTkButton(view_employees_window, fg_color="red", text="Delete Employee")
+    delete_employee.grid(row=2, column=2, columnspan=2)
 
 
-def remove_employee(employee_to_remove):
-    global employee_menu_list
-    global employees
-
-    if employee_to_remove in employees:
-        ask_remove_employee = CTkMessagebox(title="Delete Employee?", message=f"Are you sure you want to delete {employee_to_remove} from the employee list?", icon="warning", option_1="Cancel", option_2="No", option_3="Yes")
-        response = ask_remove_employee.get()
-        if response == "Yes":
-            for index, employee in enumerate(employees):
-                if employee_to_remove == employees[index]:
-                    employees.pop(index)
-                    employee_menu_list.destroy()  # Destroy the current Options Menu
-                    employee_menu_list = CTkOptionMenu(root, values=employees)
-                    employee_menu_list.grid(row=0, column=4, padx=5, pady=5)
-        else:
-            pass
-
-
-employee_entry = StringVar(root)
-CTkLabel(root, text="Enter Employee name: ").grid(row=0, column=0, padx=5, pady=5)
-CTkEntry(root, textvariable=employee_entry).grid(row=0, column=1, padx=5, pady=5)
-CTkButton(root, text="Insert New Employee", command=lambda: enter_new_employee(employee_entry.get())).grid(row=0, column=2, padx=5, pady=5)
-
-
-# <-- Employee List --> #
-CTkLabel(root, text="Employee List:").grid(row=0, column=3, padx=5, pady=5)
-employee_menu_list = CTkOptionMenu(root, values=employees)
-employee_menu_list.grid(row=0, column=4, padx=5, pady=5)
-CTkButton(root, text="Delete Employee", command=lambda: remove_employee(employee_menu_list.get())).grid(row=0, column=5, padx=5, pady=5)
-
-
-# <--  Employee Frame --> #
-CTkLabel(root, text="Table of work").grid(row=1, column=3, padx=2, pady=2)
-employee_frame = CTkFrame(root, width=300)
-
+CTkButton(root, text="View/Edit Employees", command=view_or_edit_employees).grid(row=0, column=0, padx=5, pady=5)
 
 # <-- Main loop --> #
 root.mainloop()
