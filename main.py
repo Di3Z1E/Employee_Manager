@@ -8,21 +8,21 @@ root.geometry("850x600")
 root.resizable(False, False)
 
 # <-- Set Globals --> #
-employees = ["Natan", "David"]
+employees = ["Natan", "David", "Tali", "Moshe", "Yafa", "Ronit"]
 
 
 # <-- Enter New Employee --> #
 def enter_new_employee(new_employee):
     global employee_menu_list
     global employees
-
-    if new_employee in employees:
+    
+    if new_employee.title() in employees:
         employee_exists = CTkLabel(root, text_color="red", text="Employee already exists!").grid(row=1, column=1, padx=1, pady=1)
     else:
         if new_employee == "" or len(new_employee) < 2:
             employee_exists = CTkLabel(root, text_color="red", text="Invalid Employee Name!").grid(row=1, column=1, padx=1, pady=1)
         else:
-            employees.append(new_employee)  # Enter the new employee
+            employees.append(new_employee.title())  # Enter the new employee
             employee_menu_list.destroy()  # Destroy the current Options Menu
             employee_menu_list = CTkOptionMenu(root, values=employees)  # Rebuild the Options menu with the updated employees
             employee_menu_list.grid(row=0, column=4, padx=5, pady=5)
@@ -60,7 +60,7 @@ CTkButton(root, text="Delete Employee", command=lambda: remove_employee(employee
 
 
 # <--  Employee Frame --> #
-CTkLabel(root, text="Table of work").grid(row=1, column=2, padx=2, pady=2)
+CTkLabel(root, text="Table of work").grid(row=1, column=3, padx=2, pady=2)
 employee_frame = CTkFrame(root, width=300)
 
 
