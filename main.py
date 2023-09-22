@@ -1,8 +1,9 @@
+from CTkMessagebox import *
 from customtkinter import *
 
 # <-- Program Configurations --> #
 root = CTk()
-root.title("Time Seclude")
+root.title("Employee Manager")
 root.geometry("850x600")
 root.resizable(False, False)
 
@@ -18,10 +19,13 @@ def enter_new_employee(new_employee):
     if new_employee in employees:
         employee_exists = CTkLabel(root, text_color="red", text="Employee already exists!").grid(row=1, column=1, padx=1, pady=1)
     else:
-        employees.append(new_employee)  # Enter the new employee
-        employee_menu_list.destroy()  # Destroy the current Options Menu
-        employee_menu_list = CTkOptionMenu(root, values=employees)  # Rebuild the Options menu with the updated employees
-        employee_menu_list.grid(row=0, column=4, padx=5, pady=5)
+        if new_employee == "" or len(new_employee) < 2:
+            employee_exists = CTkLabel(root, text_color="red", text="Invalid Employee Name!").grid(row=1, column=1, padx=1, pady=1)
+        else:
+            employees.append(new_employee)  # Enter the new employee
+            employee_menu_list.destroy()  # Destroy the current Options Menu
+            employee_menu_list = CTkOptionMenu(root, values=employees)  # Rebuild the Options menu with the updated employees
+            employee_menu_list.grid(row=0, column=4, padx=5, pady=5)
 
 
 def remove_employee(employee_to_remove):
@@ -29,12 +33,17 @@ def remove_employee(employee_to_remove):
     global employees
 
     if employee_to_remove in employees:
-        for index, employee in enumerate(employees):
-            if employee_to_remove == employees[index]:
-                employees.pop(index)
-                employee_menu_list.destroy()  # Destroy the current Options Menu
-                employee_menu_list = CTkOptionMenu(root, values=employees)  # Rebuilt the Options menu with the updated employees
-                employee_menu_list.grid(row=0, column=4, padx=5, pady=5)
+        ask_remove_employee = CTkMessagebox(title="Delete Employee?", message=f"Are you sure you want to delete {employee_to_remove} from the employee list?", icon="warning", option_1="Cancel", option_2="No", option_3="Yes")
+        response = ask_remove_employee.get()
+        if response == "Yes":
+            for index, employee in enumerate(employees):
+                if employee_to_remove == employees[index]:
+                    employees.pop(index)
+                    employee_menu_list.destroy()  # Destroy the current Options Menu
+                    employee_menu_list = CTkOptionMenu(root, values=employees)
+                    employee_menu_list.grid(row=0, column=4, padx=5, pady=5)
+        else:
+            pass
 
 
 employee_entry = StringVar(root)
