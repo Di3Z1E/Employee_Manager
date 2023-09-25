@@ -1,7 +1,6 @@
-import json
-
 from customtkinter import *
 from CTkMessagebox import *
+import json
 
 
 class App(CTk):
@@ -11,18 +10,20 @@ class App(CTk):
         self.title("Employee Organizer")
         self.resizable(False, False)
         self.main_page()  # Display main page
+        self.iconbitmap("employee_icon.ico")
 
     def main_page(self):
         CTkButton(self, text="View Or Edit Employees", command=lambda: self.display_outer_pages("View Employees")).grid(row=1, column=0)
 
-        header = CTkLabel(self, font=("Helvetica", 16), text="Employee Organizer", text_color="Green")
+        header = CTkLabel(self, font=("Gisha", 16), text="Employee Organizer", text_color="Green")
         header.grid(row=0, columnspan=6, column=6)
 
     def display_outer_pages(self, type):
         if type == "View Employees":
             self.employees()  # Display Employee CRUD window on button click
 
-    def employees(self):
+    @staticmethod
+    def employees():
         # Create Empty storage for employees
         employees_json = {}
         employee_id_list = []
@@ -40,19 +41,22 @@ class App(CTk):
 
         except FileNotFoundError:
             with open(os.path.expanduser("~/Documents/Employee List/employees.json"), "w") as file:
-                file.write("""{
-          "employees": {
-          }
-        }""")
+                file.write("""
+                  {
+                    "employees": {
+                    }
+                  }
+                """)
 
         # Create the new window
         view_employees_window = CTkToplevel()
-        view_employees_window.title("Employee Manager @ View/Edit Employees")
+        view_employees_window.title("Employee Organizer @ View/Edit Employees")
         view_employees_window.geometry("950x700")
         view_employees_window.resizable(False, False)
+        view_employees_window.grab_set()
 
         # Create the widgets
-        employee_list_label = CTkLabel(view_employees_window, font=("Helvetica", 20), text="Employee List")
+        employee_list_label = CTkLabel(view_employees_window, font=("Gisha", 20), text="Employee List")
         employee_list_label.grid(row=0, column=0, columnspan=4, padx=5, pady=5)
 
         employee_list_frame = CTkScrollableFrame(master=view_employees_window, width=920, height=500)
@@ -116,12 +120,44 @@ class App(CTk):
 
                     CTkLabel(view_employees_window, text_color="green", text="Successfully Deleted Employee").grid(row=4, column=1, columnspan=2, padx=15, pady=15)
 
+        def create_new_employee():
+            # Create a new window for the form
+            employee_create_window = CTkToplevel()
+            employee_create_window.title("Employee Organizer @ Create Employee")
+            employee_create_window.geometry("350x300")
+            employee_create_window.resizable(False, False)
+            employee_create_window.grab_set()
+
+
+            # Add widgets
+            CTkLabel(employee_create_window, font=("Gisha", 17), text_color="light blue", text="Enter Employee Details Form").grid(row=0, column=0, columnspan=2, padx=5, pady=5)
+
+            CTkLabel(employee_create_window, text="Enter Employee First Name:").grid(row=1, column=0, padx=5, pady=5)
+            CTkEntry(employee_create_window).grid(row=1, column=1, padx=5, pady=5)
+
+            CTkLabel(employee_create_window, text="Enter Employee Last Name:").grid(row=2, column=0, padx=5, pady=5)
+            CTkEntry(employee_create_window).grid(row=2, column=1, padx=5, pady=5)
+
+            CTkLabel(employee_create_window, text="Enter Employee Role:").grid(row=3, column=0, padx=5, pady=5)
+            CTkEntry(employee_create_window).grid(row=3, column=1, padx=5, pady=5)
+
+            CTkLabel(employee_create_window, text="Enter Employee Category:").grid(row=4, column=0, padx=5, pady=5)
+            CTkEntry(employee_create_window).grid(row=4, column=1, padx=5, pady=5)
+
+            CTkLabel(employee_create_window, text="Enter Employee Rate:").grid(row=5, column=0, padx=5, pady=5)
+            CTkEntry(employee_create_window).grid(row=5, column=1, padx=5, pady=5)
+
+            CTkButton(employee_create_window, text="Save", fg_color="green").grid(row=6, column=0, padx=7, pady=7)
+            CTkButton(employee_create_window, text="Cancel & Exit", fg_color="red", command=employee_create_window.destroy).grid(row=6, column=1, padx=7, pady=7)
+
+            employee_create_window.focus()
+
         selected_employee_var = StringVar()
         selected_employee_var.set("Select Employee")
         selected_employee = CTkComboBox(view_employees_window, variable=selected_employee_var, values=employee_id_list, state="readonly", justify="center")
         selected_employee.grid(row=2, column=1, columnspan=2, padx=10, pady=10)
 
-        new_employee = CTkButton(view_employees_window, fg_color="green", text="New Employee")
+        new_employee = CTkButton(view_employees_window, fg_color="green", text="New Employee", command=create_new_employee)
         new_employee.grid(row=3, column=0, columnspan=2)
 
         update_employee = CTkButton(view_employees_window, text="Update Employee")
