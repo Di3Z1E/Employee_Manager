@@ -50,7 +50,7 @@ class App(CTk):
 
         # Create the new window
         view_employees_window = CTkToplevel()
-        view_employees_window.title("Employee Organizer @ View/Edit Employees")
+        view_employees_window.title("View/Edit Employees")
         view_employees_window.geometry("950x700")
         view_employees_window.resizable(False, False)
         view_employees_window.grab_set()
@@ -123,7 +123,7 @@ class App(CTk):
         def create_new_employee():
             # Create a new window for the form
             employee_create_window = CTkToplevel()
-            employee_create_window.title("Employee Organizer @ Create Employee")
+            employee_create_window.title("Create Employee")
             employee_create_window.geometry("350x300")
             employee_create_window.resizable(False, False)
             employee_create_window.grab_set()
