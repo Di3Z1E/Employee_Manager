@@ -133,24 +133,30 @@ class App(CTk):
             CTkLabel(employee_create_window, font=("Gisha", 17), text_color="light blue", text="Enter Employee Details Form").grid(row=0, column=0, columnspan=2, padx=5, pady=5)
 
             CTkLabel(employee_create_window, text="Enter Employee First Name:").grid(row=1, column=0, padx=5, pady=5)
-            CTkEntry(employee_create_window).grid(row=1, column=1, padx=5, pady=5)
+            employee_first_name = CTkEntry(employee_create_window)
+            employee_first_name.grid(row=1, column=1, padx=5, pady=5)
 
             CTkLabel(employee_create_window, text="Enter Employee Last Name:").grid(row=2, column=0, padx=5, pady=5)
-            CTkEntry(employee_create_window).grid(row=2, column=1, padx=5, pady=5)
+            employee_last_name = CTkEntry(employee_create_window)
+            employee_last_name.grid(row=2, column=1, padx=5, pady=5)
 
             CTkLabel(employee_create_window, text="Enter Employee Role:").grid(row=3, column=0, padx=5, pady=5)
-            CTkEntry(employee_create_window).grid(row=3, column=1, padx=5, pady=5)
+            employee_role = CTkEntry(employee_create_window)
+            employee_role.grid(row=3, column=1, padx=5, pady=5)
 
             CTkLabel(employee_create_window, text="Enter Employee Category:").grid(row=4, column=0, padx=5, pady=5)
-            CTkEntry(employee_create_window).grid(row=4, column=1, padx=5, pady=5)
+            employee_category = CTkEntry(employee_create_window)
+            employee_category.grid(row=4, column=1, padx=5, pady=5)
 
             CTkLabel(employee_create_window, text="Enter Employee Rate:").grid(row=5, column=0, padx=5, pady=5)
-            CTkEntry(employee_create_window).grid(row=5, column=1, padx=5, pady=5)
+            employee_rate = CTkEntry(employee_create_window)
+            employee_rate.grid(row=5, column=1, padx=5, pady=5)
 
-            CTkButton(employee_create_window, text="Save", fg_color="green").grid(row=6, column=0, padx=7, pady=7)
+            def print_data():
+                print(employee_first_name.get(), employee_last_name.get(), employee_role.get(), employee_category.get(), employee_rate.get())
+
+            CTkButton(employee_create_window, text="Save", fg_color="green", command=print_data).grid(row=6, column=0, padx=7, pady=7)
             CTkButton(employee_create_window, text="Cancel & Exit", fg_color="red", command=employee_create_window.destroy).grid(row=6, column=1, padx=7, pady=7)
-
-            employee_create_window.focus()
 
         selected_employee_var = StringVar()
         selected_employee_var.set("Select Employee")
