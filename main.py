@@ -23,7 +23,7 @@ class App(CTk):
             self.employees()  # Display Employee CRUD window on button click
 
     @staticmethod
-    def employees():
+    def employees():  # TODO -- > Switch from JSON to SQLite method for better code 
         # Create Empty storage for employees
         employees_json = {}
         employee_id_list = []
